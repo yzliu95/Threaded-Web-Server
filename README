@@ -1,0 +1,41 @@
+/*
+ * CSCI4061 Fall 2018 Project 3
+ * Name: Yuanzhe Liu
+ * X500: yuanz002
+*/
+
+#This is a solo project, no teammates. Group ID: 77
+
+#To compile the code, use 'make' directly in the folder where server.c is.
+After 'make' there is an executable file called "web_server". To run the server, use command of the following format:
+  ./web_server port path num_dispatcher num_workers dynamic_flag queue_length cache_size
+When the server is running, use terminal from the same location and run
+  ​ wget http://127.0.0.1:<port>/<relative address>
+e.g. ​ wget http://127.0.0.1:9000/image/jpg/29.jpg
+
+
+#This project contains 4 parts: request queue, cache, dispatch thread and worker thread.
+
++main() function will initialization all necessary parts.
+
++Dispatch threads wait for a request connection, once a connection is built, dispatch will put
+the request into a request queue.
+
++Worker threads will get request from the request queue and process it accordingly. If the request
+is legal, a worker will look for the request in cache, if it is in the cache it will fetch it without
+going to disk and handle the request. Otherwise the worker will open the file, put it into a cache
+and then handle the request.
+
++the request queue has FIFO property. It uses two active pointers to mimic a pipe.
+
++the cache is LRU. There is a n-by-3 table so store the relationship of each cache entry. It has the
+same functionality as a doubly-linked list.
+
+# caching mechanism
+there are three rows of relation table: OLDER, NEWER, STATUS
+OLDER: elements in this column is the index of cache entry which was access after cache entry with this index
+NEWER: elements in this column is the index of cache entry which was access before cache entry with this index
+Each time cache is accessed, the cache entry with the accessed index will be pulled to the NEWEST access side.
+When the cache is full, new cache will always replace the least recently used cache from the OLDEST side.
+
+# dynamic thread pool is not implemented
